@@ -15,7 +15,7 @@ body {
 
 #table {
     width: calc(var(--table-size, 800px) * 1.24);
-    height: calc(var(--table-size, 800px) * 0.64);
+    height: calc(var(--table-size, 800px) * 0.84);
 }
 
 @keyframes shoot {

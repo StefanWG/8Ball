@@ -14,10 +14,10 @@ let MAXPOWER = 120;
 
 let pockets = [];
 let pocketsXY = [[TABLESIZE*0.07, TABLESIZE/2*.14], 
-                [TABLESIZE/2, TABLESIZE/2*.14], 
+                [TABLESIZE*0.57, TABLESIZE/2*.14], 
                 [TABLESIZE*1.07, TABLESIZE/2*.14], 
                 [TABLESIZE*0.07, TABLESIZE/2*1.14], 
-                [TABLESIZE/2, TABLESIZE/2*1.14], 
+                [TABLESIZE*0.57, TABLESIZE/2*1.14], 
                 [TABLESIZE*1.07, TABLESIZE/2*1.14]];
 
 let state = "SETUP";
@@ -30,7 +30,12 @@ balls.push(cueBall);
 
 let cueStick = new CueStick(TABLESIZE/10*3, TABLESIZE/4+TABLESIZE*0.07, ballRadius);
 
-draw(balls, cueStick);
+let ballRackSolids = new BallRack(true);
+let ballRackStripes = new BallRack(false);
+
+let ballRacks = [ballRackSolids, ballRackStripes];
+
+draw(balls, cueStick, ballRacks);
 state = "ANGLE";
 
 // Add listeners

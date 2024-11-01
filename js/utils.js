@@ -1,4 +1,4 @@
-function draw(balls, cueStick) {
+function draw(balls, cueStick, ballRacks) {
     // Reset
     while (svg.firstChild) {
         svg.removeChild(svg.firstChild);
@@ -82,6 +82,8 @@ function draw(balls, cueStick) {
     felt.setAttribute("y", `${TABLESIZE/2*.14}px`);
     svg.appendChild(felt);
 
+    // Add pockets
+
     for (let i = 0; i < pocketsXY.length; i++){
         let pocket = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         pocket.setAttribute("cx", `${pocketsXY[i][0]}px`);
@@ -97,6 +99,12 @@ function draw(balls, cueStick) {
         svg.appendChild(group);
     }
 
+    //Draw ball racks
+    for (let ballRack of ballRacks) {
+        let group = ballRack.getSVGGroup();
+        svg.appendChild(group);
+    }
+
     // Draw Cue Stick - change depending on states
     if (state == "ANGLE" || state == "SETUP") {
         let group = cueStick.getSVGGroup();
@@ -104,6 +112,8 @@ function draw(balls, cueStick) {
         let powerBarGroup = cueStick.powerBar.getSVGGroup();
         svg.appendChild(powerBarGroup);
     }
+
+
 
 }
 
@@ -159,14 +169,14 @@ function updateBalls(FPS) {
         ball.findCollisions(balls);
         ball.friction();
     }
-    draw(balls, cueStick);
 
     if (!anotherMove) {
         clearInterval(ballMoveIntervalId);
         cueStick = new CueStick(cueBall.x, cueBall.y, ballRadius);
         state = "ANGLE";
-        draw(balls, cueStick);
+        draw(balls, cueStick, ballRacks);
         addCueAnimationEndListener(cueStick);
         return;
     }
+    draw(balls, cueStick, ballRacks);
 }
