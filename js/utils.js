@@ -25,7 +25,7 @@ function draw(balls, cueStick) {
         let pocket = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         pocket.setAttribute("cx", `${pocketsXY[i][0]}px`);
         pocket.setAttribute("cy", `${pocketsXY[i][1]}px`);
-        pocket.setAttribute("r", `${TABLESIZE/(100/2.25)}px`);
+        pocket.setAttribute("r", `${pocketRadius}px`);
         svg.appendChild(pocket);
         pockets.push(pocket)
     }
@@ -39,6 +39,8 @@ function draw(balls, cueStick) {
     if (state == "ANGLE" || state == "SETUP") {
         let group = cueStick.getSVGGroup();
         svg.appendChild(group);
+        let powerBarGroup = cueStick.powerBar.getSVGGroup();
+        svg.appendChild(powerBarGroup);
     }
 
 }
@@ -61,7 +63,7 @@ function addCueAnimationEndListener(cue) {
     cue.group.addEventListener("animationend", function(e) {
         console.log("ready to move balls");
         console.log(cue);
-        cueBall.speed = 200;
+        cueBall.speed = cue.strength * MAXPOWER;
         cueBall.direction = cue.direction;
     
         document.getElementById("cueStick").remove();
@@ -87,6 +89,7 @@ function updateBalls(FPS) {
         if (ball.move(FPS)) {
             anotherMove = true;
         }
+        ball.fallInPocket();
         // if (ball.fallInPocket()) {
         //     clearInterval(ballMoveIntervalId);
         //     return;

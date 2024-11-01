@@ -14,8 +14,10 @@ class CueStick {
         this.rotate = "";
         this.direction = 0;
         this.group = null;
+        this.strength = 0;
 
         this.length = this.x1 - this.x2;
+        this.powerBar = new PowerBar(this);
     }
 
     getSVGGroup() {
@@ -51,6 +53,7 @@ class CueStick {
 
         group.style.transformOrigin = `${this.centerX}px ${this.centerY}px`; 
         this.group = group;
+
         return group;
     }
 
@@ -90,11 +93,16 @@ class CueStick {
         // TODO: Min power to reset
         let xDist = mouseX - this.mouseDownX;
         let yDist = mouseY - this.mouseDownY;
-        let power = Math.sqrt(xDist**2 + yDist**2);
-        this.group.style.transform = this.rotate + `translate(${-power}px, ${0}px)`;
-        this.translate = `translate(${-power}px, ${0}px)`;
-        // document.documentElement.style.setProperty('--anim-x', power);
-
+        let strength = Math.min(Math.sqrt(xDist**2 + yDist**2), MAXPOWER);
+        this.strength = Math.min(strength / MAXPOWER, 1);
+        this.group.style.transform = this.rotate + `translate(${-strength}px, ${0}px)`;
+        this.translate = `translate(${-strength}px, ${0}px)`;
+        
+        let pbf = document.getElementById("powerBarFiller");
+        let hAdjust = this.powerBar.height*this.strength
+        pbf.setAttribute("y", `${TABLESIZE*1.28/4+this.powerBar.height/2 - hAdjust}px`);
+        pbf.setAttribute("height", `${hAdjust}px`);
+        pbf.setAttribute("fill", `color-mix(in HSL, yellow ${100-this.strength*100}%, red)`);
     }
 
     power() {
@@ -110,5 +118,66 @@ class CueStick {
         this.group.style.animationFillMode = "forwards";
         this.group.style.animationTimingFunction = "linear";
         this.group.style.animationDuration = "1s";
+    }
+}
+
+class PowerBar {
+    constructor(cueStick) {
+        this.height = TABLESIZE/2 * 0.75;
+        this.width = 30;
+        this.group = null;
+        this.cueStick = cueStick;
+
+    }
+
+    getSVGGroup() {
+        this.group = document.createElementNS("http://www.w3.org/2000/svg","g");
+        this.group.id = "powerBar";
+
+        console.log(this.cueStick)
+
+        // Draw power
+        let power = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        power.id = "powerBarFiller";
+        power.setAttribute("width", `${this.width}px`);
+        power.setAttribute("height", `${this.height*this.cueStick.strength}px`);
+        power.setAttribute("fill", "red");
+        power.setAttribute("x", `${TABLESIZE*1.14 + 30}px`);
+        power.setAttribute("y", `${TABLESIZE*1.28/4-this.height/2}px`);
+        power.setAttribute("rx", "10");
+        this.group.appendChild(power);
+        console.log("Bar Height ", this.height*this.cueStick.strength);
+
+        // Draw border
+
+        let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("width", `${this.width}px`);
+        rect.setAttribute("height", `${this.height}px`);
+        rect.setAttribute("stroke", "black");
+        rect.setAttribute("stroke-width", "3"); 
+        rect.setAttribute("fill", "white");
+        rect.setAttribute("fill-opacity", "0");
+        rect.setAttribute("x", `${TABLESIZE*1.14 + 30}px`);
+        rect.setAttribute("y", `${TABLESIZE*1.28/4-this.height/2}px`);
+        rect.setAttribute("rx", "10");
+        this.group.appendChild(rect);
+
+        // Draw divisions
+        let divisions = 10;
+
+        for (let i = 1; i < divisions; i++) {
+            let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            let y = TABLESIZE*1.28/4-this.height/2 + this.height/divisions*i;
+            line.setAttribute("x1", `${TABLESIZE*1.14 + 35}px`);
+            line.setAttribute("y1", `${y}px`);
+            line.setAttribute("x2", `${TABLESIZE*1.14 + 25+this.width}px`);
+            line.setAttribute("y2", `${y}px`);
+            line.setAttribute("stroke", "black");
+            line.setAttribute("stroke-width", "3");
+    
+            this.group.appendChild(line);
+        }
+
+        return this.group;
     }
 }

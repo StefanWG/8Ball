@@ -5,6 +5,7 @@ class Ball {
         this.radius = radius;
         this.speed = 0; // in inches per second
         this.direction = 0; // in radians
+        this.color = "black";
     }
 
     getSVGGroup() {
@@ -14,6 +15,20 @@ class Ball {
         ball.setAttribute("cy", `${this.y}px`);
         ball.setAttribute("r", `${this.radius}px`);
         return group;
+    }
+
+    fallInPocket() {
+        for (let pocket of pocketsXY) {
+            // if (Math.abs(pocket[0] - this.x) < pocketRadius*2 && Math.abs(pocket[1] - this.y) < pocketRadius*2) {
+            //     console.log("FELL IN POCKET");
+            // }
+            if (Math.sqrt((pocket[0] - this.x) ** 2 + (pocket[1] - this.y) ** 2) < pocketRadius) {
+                this.color = "red";
+                console.log("HERE")
+                return true;
+            }
+        }
+        return false;
     }
 
     move(FPS) {
@@ -28,21 +43,26 @@ class Ball {
         this.x += dx;
         this.y += dy;
         
+        // TODO: Fix position it is moved to by going back on line until hits wall and then moving forward
 
         if (this.x >= edges["right"] - ballRadius) { // Right Side
             this.direction = Math.PI - this.direction;
+            this.x = edges["right"] - ballRadius;
         }
 
         if (this.x <= edges["left"] + ballRadius) { // Left Side
             this.direction = Math.PI - this.direction;
+            this.x = edges["left"] + ballRadius;
         }
 
         if (this.y >= edges["bottom"] - ballRadius) { // Bottom
             this.direction = -this.direction;
+            this.y = edges["bottom"] - ballRadius;
         }
 
         if (this.y <= edges["top"] + ballRadius) { // Top
             this.direction = -this.direction;
+            this.y = edges["top"] + ballRadius;
         }
 
         return true;
@@ -147,6 +167,7 @@ class NumberedBall extends Ball {
 class CueBall extends Ball {
     constructor(x, y, radius) { 
         super(x,y,radius);
+        this.color = "white"
     }
 
     getSVGGroup() {
@@ -154,7 +175,7 @@ class CueBall extends Ball {
         let ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         ball.setAttribute("cx", `${this.x}px`);
         ball.setAttribute("cy", `${this.y}px`);
-        ball.setAttribute("fill", "white");
+        ball.setAttribute("fill", this.color);
         ball.setAttribute("r", `${ballRadius}px`);
         group.appendChild(ball);
         return group;
