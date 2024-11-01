@@ -23,7 +23,7 @@ class CueStick {
 
         this.length = this.x1 - this.x2;
 
-        // Add parts of cue stick
+        // Draw Cue
 
         let cue1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
         cue1.setAttribute("x1", `${this.x1}px`);
@@ -52,8 +52,7 @@ class CueStick {
 
         svg.appendChild(this.group);
 
-        // this.group.style.transformOrigin = `${centerX}px ${centerY}px`;
-        // this.group.style.transform = "rotate(45deg)";   
+        this.group.style.transformOrigin = `${this.centerX}px ${this.centerY}px`; 
     }
 
     updateAngle(mouseX, mouseY) {
@@ -85,10 +84,15 @@ class CueStick {
             this.mouseDownY = mouseY;
             return;
         }
+
+        // Compute power and translate cue stick
+        // TODO: Max power
+        // TODO: Exponential power
+        // TODO: Power bar
+        // TODO: Min power to reset
         let xDist = mouseX - this.mouseDownX;
         let yDist = mouseY - this.mouseDownY;
         let power = Math.sqrt(xDist**2 + yDist**2);
-        this.group.style.transformOrigin = `${this.centerX}px ${this.centerY}px`;
         this.group.style.transform = this.rotate + `translate(${-power}px, ${0}px)`;
         this.translate = `translate(${-power}px, ${0}px)`;
     }
@@ -99,6 +103,7 @@ class CueStick {
 
     shooting() {
         this.status = "SHOOTING";
+        // TODO: On animation end, fade to hidden
         this.group.animate([
             {transform: this.rotate + this.translate},
             {transform: this.rotate + `translate(${5}px, ${0}px)`}

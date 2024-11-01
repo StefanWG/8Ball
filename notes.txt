@@ -1,7 +1,6 @@
 Ball falls over when half its mass is over the hole.
 
 Make class for this stuff.
-    - Class for cue with function to update position
     - Subclass ball and cue ball
     - Movement and interaction with speed functions and friction.
 
