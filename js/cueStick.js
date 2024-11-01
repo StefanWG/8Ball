@@ -1,8 +1,6 @@
 class CueStick {
-    constructor(centerX, centerY, ballRadius, svg) {
+    constructor(centerX, centerY, ballRadius) {
         // THIS ASSUME y1 == y2 and x1 > x2
-        this.group = document.createElementNS("http://www.w3.org/2000/svg","g");
-        this.group.id = "cueStick"
         this.x1 = centerX-ballRadius-5;
         this.y1 = centerY;
         this.x2 = centerX-ballRadius-205;
@@ -15,8 +13,14 @@ class CueStick {
         this.translate = "";
         this.rotate = "";
         this.direction = 0;
+        this.group = null;
 
         this.length = this.x1 - this.x2;
+    }
+
+    getSVGGroup() {
+        let group = document.createElementNS("http://www.w3.org/2000/svg","g");
+        group.id = "cueStick"
 
         // Draw Cue
 
@@ -27,7 +31,7 @@ class CueStick {
         cue1.setAttribute("y2", `${this.y2}px`);
         cue1.setAttribute("stroke", "black");
         cue1.setAttribute("stroke-width", "3");
-        this.group.appendChild(cue1);
+        group.appendChild(cue1);
         let cue2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
         cue2.setAttribute("x1", `${this.x1}px`);
         cue2.setAttribute("y1", `${this.y1}px`);
@@ -35,7 +39,7 @@ class CueStick {
         cue2.setAttribute("y2", `${this.y2}px`);
         cue2.setAttribute("stroke", "white");
         cue2.setAttribute("stroke-width", "3");
-        this.group.appendChild(cue2);
+        group.appendChild(cue2);
         let cue3 = document.createElementNS("http://www.w3.org/2000/svg", "line");
         cue3.setAttribute("x1", `${this.x1}px`);
         cue3.setAttribute("y1", `${this.y1}px`);
@@ -43,11 +47,11 @@ class CueStick {
         cue3.setAttribute("y2", `${this.y1}px`);
         cue3.setAttribute("stroke", "brown");
         cue3.setAttribute("stroke-width", "3");
-        this.group.appendChild(cue3);
+        group.appendChild(cue3);
 
-        svg.appendChild(this.group);
-
-        this.group.style.transformOrigin = `${this.centerX}px ${this.centerY}px`; 
+        group.style.transformOrigin = `${this.centerX}px ${this.centerY}px`; 
+        this.group = group;
+        return group;
     }
 
     updateAngle(mouseX, mouseY) {
@@ -99,20 +103,12 @@ class CueStick {
 
     shooting() {
         this.status = "SHOOTING";
+        console.log(this.group);
         // TODO: On animation end, fade to hidden
 
         this.group.style.animationName = "shoot";
         this.group.style.animationFillMode = "forwards";
         this.group.style.animationTimingFunction = "linear";
         this.group.style.animationDuration = "1s";
-
-        // let a = this.group.animate([
-        //     {transform: this.rotate + this.translate},
-        //     {transform: this.rotate + `translate(${5}px, ${0}px)`}
-        // ], {
-        //     duration: 500,
-        //     iterations: 1,
-        //     fill: "forwards"
-        // });
     }
 }
