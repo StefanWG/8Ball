@@ -1,6 +1,7 @@
 let TABLESIZE = 800;
 
 let svg = document.getElementById('table');
+const rect = svg.getBoundingClientRect();
 
 let border = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 border.setAttribute("width", `${TABLESIZE*1.14}px`);
@@ -66,6 +67,18 @@ cueBall.setAttribute("fill", "white");
 cueBall.setAttribute("r", `${ballRadius}px`);
 svg.appendChild(cueBall);
 
-let cue = new CueStick(TABLESIZE/10*3-ballRadius-5, TABLESIZE/4+TABLESIZE*0.07, TABLESIZE/10*3-200, TABLESIZE/4+TABLESIZE*0.07, svg)
+let cue = new CueStick(TABLESIZE/10*3, TABLESIZE/4+TABLESIZE*0.07, ballRadius, svg)
 
+svg.addEventListener("mousemove", function(e) {
+    cue.updateAngle(e.clientX - rect.left, e.clientY - rect.top);
+    cue.powerUp(e.clientX - rect.left, e.clientY - rect.top, false);
+});
 
+svg.addEventListener("mousedown", function(e) {
+    cue.power()
+    cue.powerUp(e.clientX - rect.left, e.clientY - rect.top, true);
+});
+
+svg.addEventListener("mouseup", function(e) {
+    cue.shooting()
+});
