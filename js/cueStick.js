@@ -1,14 +1,8 @@
-// enum CueStickState {
-//     ANGLE,
-//     POWER,
-//     SHOOTING,
-//     HIDDEN
-// }
-
 class CueStick {
     constructor(centerX, centerY, ballRadius, svg) {
         // THIS ASSUME y1 == y2 and x1 > x2
         this.group = document.createElementNS("http://www.w3.org/2000/svg","g");
+        this.group.id = "cueStick"
         this.x1 = centerX-ballRadius-5;
         this.y1 = centerY;
         this.x2 = centerX-ballRadius-205;
@@ -20,6 +14,7 @@ class CueStick {
         this.mouseDownY = NaN;
         this.translate = "";
         this.rotate = "";
+        this.direction = 0;
 
         this.length = this.x1 - this.x2;
 
@@ -60,19 +55,18 @@ class CueStick {
             return;
         }
         // Compute angle between cue stick and mouse
-        console.log("Mouse x: ", mouseX, "Mouse y: ", mouseY, "Center x: ", this.centerX, "Center y: ", this.centerY);
         let xDist = mouseX - this.centerX;
         let yDist = mouseY - this.centerY;
-        let angle = Math.atan(yDist/xDist);
+        this.direction = Math.atan(yDist/xDist);
 
         if (xDist < 0) {
-            angle += Math.PI;
+            this.direction += Math.PI;
         }
 
         // Rotate cue stick
         this.group.style.transformOrigin = `${this.centerX}px ${this.centerY}px`;
-        this.group.style.transform = `rotate(${angle}rad)`;
-        this.rotate = `rotate(${angle}rad)`;
+        this.group.style.transform = `rotate(${this.direction}rad)`;
+        this.rotate = `rotate(${this.direction}rad)`;
     }
 
     powerUp(mouseX, mouseY, firstClick) {
@@ -95,6 +89,8 @@ class CueStick {
         let power = Math.sqrt(xDist**2 + yDist**2);
         this.group.style.transform = this.rotate + `translate(${-power}px, ${0}px)`;
         this.translate = `translate(${-power}px, ${0}px)`;
+        // document.documentElement.style.setProperty('--anim-x', power);
+
     }
 
     power() {
@@ -104,13 +100,19 @@ class CueStick {
     shooting() {
         this.status = "SHOOTING";
         // TODO: On animation end, fade to hidden
-        this.group.animate([
-            {transform: this.rotate + this.translate},
-            {transform: this.rotate + `translate(${5}px, ${0}px)`}
-        ], {
-            duration: 500,
-            iterations: 1,
-            fill: "forwards"
-        });
+
+        this.group.style.animationName = "shoot";
+        this.group.style.animationFillMode = "forwards";
+        this.group.style.animationTimingFunction = "linear";
+        this.group.style.animationDuration = "1s";
+
+        // let a = this.group.animate([
+        //     {transform: this.rotate + this.translate},
+        //     {transform: this.rotate + `translate(${5}px, ${0}px)`}
+        // ], {
+        //     duration: 500,
+        //     iterations: 1,
+        //     fill: "forwards"
+        // });
     }
 }

@@ -3,6 +3,7 @@ Ball falls over when half its mass is over the hole.
 Make class for this stuff.
     - Subclass ball and cue ball
     - Movement and interaction with speed functions and friction.
+    - Move ball back into table when it goes past edges
 
 CSS for 3d on border and table and stuff
 

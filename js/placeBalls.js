@@ -1,4 +1,8 @@
 let TABLESIZE = 800;
+let ballMoveIntervalId = null;
+let FPS = 1000;
+
+let edges = {"top": TABLESIZE/2*.14, "bottom": TABLESIZE/2*1.14, "left": TABLESIZE*0.07, "right": TABLESIZE*1.07};
 
 let svg = document.getElementById('table');
 const rect = svg.getBoundingClientRect();
@@ -28,6 +32,8 @@ let pocketsXY = [[TABLESIZE*0.07, TABLESIZE/2*.14],
                 [TABLESIZE*0.07, TABLESIZE/2*1.14], 
                 [TABLESIZE/2, TABLESIZE/2*1.14], 
                 [TABLESIZE*1.07, TABLESIZE/2*1.14]];
+
+console.log(pocketsXY);
 
 for (let i = 0; i < pocketsXY.length; i++){
     let pocket = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -60,13 +66,14 @@ function addBallSvg(x, y, drawBallBelow, iters) {
 }
 
 let ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-addBallSvg(frontBallX, frontBallY, true, 4);
+addBallSvg(frontBallX, frontBallY, true, 0);
 
 // Add Cue Ball and Stick
 let cueBall = new CueBall(TABLESIZE/10*3, TABLESIZE/4+TABLESIZE*0.07, ballRadius, svg);
 balls.push(cueBall);
 
 let cue = new CueStick(TABLESIZE/10*3, TABLESIZE/4+TABLESIZE*0.07, ballRadius, svg)
+addCueAnimationEndListener(cue);
 
 // Add Event Listeners
 svg.addEventListener("mousemove", function(e) {
@@ -83,7 +90,47 @@ svg.addEventListener("mouseup", function(e) {
     cue.shooting()
 });
 
-function updateBalls() {
+function addCueAnimationEndListener(cue) {
+    cue.group.addEventListener("animationend", function(e) {
+        console.log("ready to move balls");
+        console.log(cue);
+        cueBall.speed = 200;
+        console.log("HERE")
+        cueBall.direction = cue.direction;
+        console.log("here")
+    
+        document.getElementById("cueStick").remove();
+    
+        ballMoveIntervalId = setInterval(function() {
+            updateBalls(FPS);
+        }, 1000/FPS);
+        console.log(ballMoveIntervalId);
+    });
+}
+
+
+
+function updateBalls(FPS) {
+    console.log("in updating balls");
+    let toMove = false;
+    for (let i = 0; i < balls.length; i++) {
+        if (balls[i].speed > 0) {
+            toMove = true;
+            break
+        }
+    }
+    if (!toMove) {
+        clearInterval(ballMoveIntervalId);
+        cue = new CueStick(cueBall.x, cueBall.y, ballRadius, svg)
+        addCueAnimationEndListener(cue);
+        return;
+    }
+    for (let i = 0; i < balls.length; i++) {
+        balls[i].move(FPS);
+        balls[i].fallInPocket();
+        balls[i].findCollisions(balls);
+        balls[i].friction();
+    }
     // While at least one ball has speed > 0, continue updating
 
     // Shift each ball based on speed and direction, and resolve any collisions
