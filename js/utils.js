@@ -3,20 +3,81 @@ function draw(balls, cueStick) {
     while (svg.firstChild) {
         svg.removeChild(svg.firstChild);
     }
+    // TODO: Put white polygon on top to curve the edges of table
+    // TODO: Replicate this table: https://media.istockphoto.com/id/1128385782/photo/billiard-table-isolated.jpg?s=612x612&w=0&k=20&c=LDdHJR2prRKFldGiABhhNkHnixyGdgr7ZbUpfyjhyL0=
+    //Add border - top
+    let polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    svg.appendChild(polygon);
+    
+    var array = arr = [ [ 0,0 ], 
+                [ TABLESIZE*1.14,0 ],
+                [ TABLESIZE*1.07,TABLESIZE/2*0.14 ],
+                [ TABLESIZE*0.07, TABLESIZE/2*0.14] ];
+    
+    for (value of array) {
+        var point = svg.createSVGPoint();
+        point.x = value[0];
+        point.y = value[1];
+        polygon.points.appendItem(point);
+    }
+    polygon.setAttribute("fill", "url(#BorderTop)");
 
-    //Add border
-    let border = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    border.setAttribute("width", `${TABLESIZE*1.14}px`);
-    border.setAttribute("height", `${TABLESIZE/2*1.28}px`);
-    border.setAttribute("fill", "gray");
-    border.setAttribute("rx", `${TABLESIZE/20}px`);
-    svg.appendChild(border);
+    // Add border - bottom
+    polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    svg.appendChild(polygon);
+    
+    var array = arr = [ [ 0,TABLESIZE/2*1.28 ], 
+                [ TABLESIZE*0.07,TABLESIZE/2*1.14 ],
+                [ TABLESIZE*1.07,TABLESIZE/2*1.14 ],
+                [ TABLESIZE*1.14, TABLESIZE/2*1.28] ];
+    
+    for (value of array) {
+        var point = svg.createSVGPoint();
+        point.x = value[0];
+        point.y = value[1];
+        polygon.points.appendItem(point);
+    }
+    polygon.setAttribute("fill", "url(#BorderBottom)");
+
+    //Add border - left
+    polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    svg.appendChild(polygon);
+    
+    var array = arr = [ [ 0,0 ], 
+                [ TABLESIZE*0.07, TABLESIZE/2*0.14],
+                [TABLESIZE*0.07, TABLESIZE/2*1.14 ],
+                [0, TABLESIZE/2*1.28] ];
+    
+    for (value of array) {
+        var point = svg.createSVGPoint();
+        point.x = value[0];
+        point.y = value[1];
+        polygon.points.appendItem(point);
+    }
+    polygon.setAttribute("fill", "url(#BorderLeft)");
+
+    //Add border - right
+    polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    svg.appendChild(polygon);
+    
+    var array = arr = [ [ TABLESIZE*1.14,0 ], 
+                [ TABLESIZE*1.14, TABLESIZE/2*1.28],
+                [TABLESIZE*1.07, TABLESIZE/2*1.14 ],
+                [TABLESIZE*1.07, TABLESIZE/2*0.14] ];
+    
+    for (value of array) {
+        var point = svg.createSVGPoint();
+        point.x = value[0];
+        point.y = value[1];
+        polygon.points.appendItem(point);
+    }
+    polygon.setAttribute("fill", "url(#BorderRight)");
 
     //Add Felt
     let felt = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     felt.setAttribute("width", `${TABLESIZE}px`);
     felt.setAttribute("height", `${TABLESIZE/2}px`);
-    felt.setAttribute("fill", "green");
+    felt.setAttribute("fill", "url(#FeltGradient)");
     felt.setAttribute("x", `${TABLESIZE*0.07}px`);
     felt.setAttribute("y", `${TABLESIZE/2*.14}px`);
     svg.appendChild(felt);
@@ -26,6 +87,7 @@ function draw(balls, cueStick) {
         pocket.setAttribute("cx", `${pocketsXY[i][0]}px`);
         pocket.setAttribute("cy", `${pocketsXY[i][1]}px`);
         pocket.setAttribute("r", `${pocketRadius}px`);
+        pocket.setAttribute("fill", "url(#Pocket)")
         svg.appendChild(pocket);
         pockets.push(pocket)
     }

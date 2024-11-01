@@ -87,9 +87,6 @@ class CueStick {
         }
 
         // Compute power and translate cue stick
-        // TODO: Max power
-        // TODO: Exponential power
-        // TODO: Power bar
         // TODO: Min power to reset
         let xDist = mouseX - this.mouseDownX;
         let yDist = mouseY - this.mouseDownY;
