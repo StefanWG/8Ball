@@ -1,0 +1,26 @@
+#pool-table {
+    /* border: 5px solid black; */
+    width: calc(var(--table-size) * 1.14);
+    height: calc(var(--table-size) * 0.64);
+    display: block;
+    /* box-sizing: border-box; */
+    border-radius: 50px;
+    /* border: 100px red solid; */
+    box-shadow: inset 0px 0px 0px 100px #f00;
+
+}
+
+#felt {
+    width: calc(var(--table-size) * 1.14);
+    height: calc(var(--table-size) * 0.64);
+    border-radius: 50px;
+    background-color: green;
+    box-shadow: inset 0px 0px 0px 10px #f00;
+}
+
+#table {
+    width: calc(var(--table-size, 800px) * 1.14);
+    height: calc(var(--table-size, 800px) * 0.64);
+}
+
+
