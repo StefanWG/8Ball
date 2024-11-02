@@ -73,6 +73,16 @@ function draw(balls, cueStick, ballRacks) {
     }
     polygon.setAttribute("fill", "url(#BorderRight)");
 
+    // Add curve to table corners
+    let curve = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    curve.setAttribute("width", `${TABLESIZE*1.14}px`);
+    curve.setAttribute("height", `${TABLESIZE/2*1.28}px`);
+    curve.setAttribute("fill-opacity", "0");
+    curve.setAttribute("stroke", "white");
+    curve.setAttribute("stroke-width", "25");
+    curve.setAttribute("rx", "30");
+    svg.appendChild(curve);
+
     //Add Felt
     let felt = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     felt.setAttribute("width", `${TABLESIZE}px`);
