@@ -130,9 +130,6 @@ class PowerBar {
     getSVGGroup() {
         this.group = document.createElementNS("http://www.w3.org/2000/svg","g");
         this.group.id = "powerBar";
-
-        console.log(this.cueStick)
-
         // Draw power
         let power = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         power.id = "powerBarFiller";
@@ -143,10 +140,7 @@ class PowerBar {
         power.setAttribute("y", `${TABLESIZE*1.28/4-this.height/2}px`);
         power.setAttribute("rx", "10");
         this.group.appendChild(power);
-        console.log("Bar Height ", this.height*this.cueStick.strength);
-
         // Draw border
-
         let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         rect.setAttribute("width", `${this.width}px`);
         rect.setAttribute("height", `${this.height}px`);

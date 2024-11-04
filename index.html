@@ -3,11 +3,16 @@
 <head>
     <title>Game</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/utils.js" defer></script>
-    <script src="js/ballRack.js" defer></script>
-    <script src="js/cueStick.js" defer></script>
+    <script src="js/drawing.js" defer></script>
     <script src="js/ball.js" defer></script>
-    <script src="js/placeBalls.js" defer></script>
+    <script src="js/line.js" defer></script>
+
+    <script src="js/collision.js" defer></script>
+    <script src="js/utils.js" defer></script>
+    <script src="js/cueStick.js" defer></script>
+    <script src="js/setup.js" defer></script>
+
+
 
 </head>
 <body>
@@ -23,28 +28,29 @@
                 <stop offset="90%" stop-color="green" />
             </radialGradient>
             <linearGradient id="BorderTop" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="#A9A9A9" />
-                <stop offset="30%" stop-color="#222222" />
+                <stop offset="10%" stop-color="#A9A9A9" />
+                <stop offset="40%" stop-color="#222222" />
                 <stop offset="100%" stop-color="gray" />
             </linearGradient>
             <linearGradient id="BorderLeft" x1="0" x2="1" y1="0" y2="0">
-                <stop offset="0%" stop-color="#A9A9A9" />
-                <stop offset="30%" stop-color="#222222" />
+                <stop offset="10%" stop-color="#A9A9A9" />
+                <stop offset="40%" stop-color="#222222" />
                 <stop offset="100%" stop-color="gray" />
             </linearGradient>
             <linearGradient id="BorderBottom" x1="0" x2="0" y1="1" y2="0">
-                <stop offset="0%" stop-color="#A9A9A9" />
-                <stop offset="30%" stop-color="#222222" />
+                <stop offset="10%" stop-color="#A9A9A9" />
+                <stop offset="40%" stop-color="#222222" />
                 <stop offset="100%" stop-color="gray" />
             </linearGradient>
             <linearGradient id="BorderRight" x1="1" x2="0" y1="0" y2="0">
-                <stop offset="0%" stop-color="#A9A9A9" />
-                <stop offset="30%" stop-color="#222222" />
+                <stop offset="10%" stop-color="#A9A9A9" />
+                <stop offset="40%" stop-color="#222222" />
                 <stop offset="100%" stop-color="gray" />
             </linearGradient>
         </defs>
     </svg>
-    <svg id="table">
+    <svg id="svg" width="800px" height="800px">
     </svg>
+
 </body>
 </html>

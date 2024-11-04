@@ -1,22 +1,22 @@
-:root {
+/* :root {
     --table-size: 800px;
     --rotate-rad: 1rad;
     --anim-x: 0px;
     --anim-y: 0px;
-}
+} */
 
-body {
+/* body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-}
+} */
 
-#table {
+/* #table {
     width: calc(var(--table-size, 800px) * 1.24);
     height: calc(var(--table-size, 800px) * 0.84);
-}
+} */
 
 @keyframes shoot {
     from {transform: rotate(var(--rotate-rad)rad) translate(var(--anim-x)px, var(--anim-y)px)}

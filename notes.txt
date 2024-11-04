@@ -10,3 +10,4 @@ CSS for 3d on border and table and stuff
 Eventually allow for shots with spin
 
 Different FPS for computing position and drawing
+Some probability of bouncing out if going too fast?

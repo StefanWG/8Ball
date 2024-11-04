@@ -1,140 +1,35 @@
 class Ball {
-    constructor (x,y,radius) {
+    /*
+    Class written using code from https://stackoverflow.com/questions/60727534/balls-bouncing-off-of-each-other
+    for the physical interactions between balls.
+    */
+    constructor(x, y, r, vx, vy, number, color) {
+        this.r = r;
+        this.m = 1;
         this.x = x;
         this.y = y;
-        this.radius = radius;
-        this.speed = 0; // in inches per second
-        this.direction = 0; // in radians
-        this.color = "black";
+        this.vx = vx;
+        this.vy = vy;
+        this.number = number;
+        this.color = color;
     }
 
-    getSVGGroup() {
-        let group = document.createElementNS("http://www.w3.org/2000/svg","g");
-        let ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        ball.setAttribute("cx", `${this.x}px`);
-        ball.setAttribute("cy", `${this.y}px`);
-        ball.setAttribute("r", `${this.radius}px`);
-        return group;
-    }
+    update() {
+        if (this.vx != 0 || this.vy != 0) {
+            this.x += this.vx;
+            this.y += this.vy;
 
-    fallInPocket() {
-        for (let pocket of pocketsXY) {
-            // if (Math.abs(pocket[0] - this.x) < pocketRadius*2 && Math.abs(pocket[1] - this.y) < pocketRadius*2) {
-            //     console.log("FELL IN POCKET");
-            // }
-            if (Math.sqrt((pocket[0] - this.x) ** 2 + (pocket[1] - this.y) ** 2) < pocketRadius) {
-                this.color = "red";
-                console.log("HERE")
-                return true;
-            }
-        }
-        return false;
-    }
+            // Friction
+            this.vx *= FRICTION
+            this.vy *= FRICTION
 
-    move(FPS) {
-        if (this.speed == 0) {
-            return false;
-        }
-
-        // Move the ball
-        let distance = this.speed * (TABLESIZE / 100) / FPS
-        let dx = distance * Math.cos(this.direction);
-        let dy = distance * Math.sin(this.direction);
-        this.x += dx;
-        this.y += dy;
-        
-        // TODO: Fix position it is moved to by going back on line until hits wall and then moving forward
-
-        if (this.x >= edges["right"] - ballRadius) { // Right Side
-            this.direction = Math.PI - this.direction;
-            this.x = edges["right"] - ballRadius;
-        }
-
-        if (this.x <= edges["left"] + ballRadius) { // Left Side
-            this.direction = Math.PI - this.direction;
-            this.x = edges["left"] + ballRadius;
-        }
-
-        if (this.y >= edges["bottom"] - ballRadius) { // Bottom
-            this.direction = -this.direction;
-            this.y = edges["bottom"] - ballRadius;
-        }
-
-        if (this.y <= edges["top"] + ballRadius) { // Top
-            this.direction = -this.direction;
-            this.y = edges["top"] + ballRadius;
-        }
-
-        return true;
-    } 
-
-    friction() {
-        if (this.speed > 5) {
-            this.speed *= 0.99;
-        } else {
-            this.speed = 0;
-        }
-    }
-
-    findCollisions(balls) {
-        for (let ball of balls) {
-            if (ball == this) {
-                continue;
-            }
-            if (Math.sqrt((ball.x - this.x) ** 2 + (ball.y - this.y) ** 2) < 2 * ballRadius) {
-                this.collide(ball);
+            if (Math.sqrt(this.vx ** 2 + this.vy **2) < 0.1) {
+                this.vx = 0;
+                this.vy = 0;
             }
         }
     }
-
-    getVelocityVector() {
-        return [this.speed * Math.cos(this.direction), this.speed * Math.sin(this.direction)];
-    }
-
-    rotate(angle, vector) {
-        if (angle < 0) {
-            angle += 2 * Math.PI;
-        }
-        let rotatedVed =  [vector[0] * Math.cos(angle) - vector[1] * Math.sin(angle), vector[0] * Math.sin(angle) + vector[1] * Math.cos(angle)];
-        return rotatedVed;
-    }
-
-    setSpeedAndDirection(vector) {
-        this.speed = Math.sqrt(vector[0] ** 2 + vector[1] ** 2);
-        this.direction = Math.atan(vector[1] / vector[0]);
-    }
-
-    collide(ball) {
-        console.log(balls);
-        // console.log("COLLIDING!", this.speed, this.direction)
-        let veloVector = this.getVelocityVector();
-        let veloVectorOther = ball.getVelocityVector();
-
-        let theta = Math.atan((ball.y - this.y) / (ball.x - this.x));
-        let u1 = this.rotate(theta, veloVector);
-        let u2 = this.rotate(theta, veloVectorOther);
-        // console.log(u1, u2, theta);
-        let v1 = this.rotate( -theta, [u2[0], u1[1]]);
-        let v2 = this.rotate( -theta, [u1[0], u2[1]]);
-        // console.log(v1);
-
-        this.setSpeedAndDirection(v1);
-        ball.setSpeedAndDirection(v2);
-
-        // console.log(this.speed, this.direction);
-
-        // clearInterval(ballMoveIntervalId);
-    }
-}
-
-class NumberedBall extends Ball {
-    constructor(x, y, radius, bO) {
-        super(x,y,radius);
-        this.number = ballOrder[bO];
-        this.color = ballColors[(this.number-1) % 8];
-    }
-
-    getSVGGroup() {
+    draw() {
         let group = document.createElementNS("http://www.w3.org/2000/svg","g");
         let ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         if (this.number < 9) {
@@ -150,34 +45,97 @@ class NumberedBall extends Ball {
         // Add Stripe
         if (this.number > 8) {
             let ballRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            ballRect.setAttribute("x", `${this.x-this.radius}px`);
-            ballRect.setAttribute("y", `${this.y-this.radius/2}px`);
-            ballRect.setAttribute("width", `${this.radius*2}px`);
-            ballRect.setAttribute("height", `${this.radius}px`);
+            ballRect.setAttribute("x", `${this.x-this.r}px`);
+            ballRect.setAttribute("y", `${this.y-this.r/2}px`);
+            ballRect.setAttribute("width", `${this.r*2}px`);
+            ballRect.setAttribute("height", `${this.r}px`);
             ballRect.setAttribute("fill", this.color);
-            ballRect.setAttribute("rx", `${this.radius/2}px`);
-            ballRect.setAttribute("ry", `${this.radius/4}px`);
+            ballRect.setAttribute("rx", `${this.r/2}px`);
+            ballRect.setAttribute("ry", `${this.r/4}px`);
             group.appendChild(ballRect);
         }
-        return group;
+        svg.appendChild(group);
     }
-
-}
-
-class CueBall extends Ball {
-    constructor(x, y, radius) { 
-        super(x,y,radius);
-        this.color = "white"
+    interceptLineTime(l, time) {
+        const u = Math.interceptLineBallTime(this.x, this.y, this.vx, this.vy, l.x1, l.y1, l.x2, l.y2,  this.r);
+        if(u >= time && u <= 1) {
+            return u;
+        }
     }
-
-    getSVGGroup() {
-        let group = document.createElementNS("http://www.w3.org/2000/svg","g");
-        let ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        ball.setAttribute("cx", `${this.x}px`);
-        ball.setAttribute("cy", `${this.y}px`);
-        ball.setAttribute("fill", this.color);
-        ball.setAttribute("r", `${ballRadius}px`);
-        group.appendChild(ball);
-        return group;
+    checkBallBallTime(t, minTime) {
+        return t > minTime && t <= 1;
     }
+    interceptBallTime(b, time) {
+        const x = this.x - b.x;
+        const y = this.y - b.y;
+        const d = (x * x + y * y) ** 0.5;
+        if(d > this.r + b.r) {
+            const times = Math.circlesInterceptUnitTime(
+                this.x, this.y, 
+                this.x + this.vx, this.y + this.vy, 
+                b.x, b.y,
+                b.x + b.vx, b.y + b.vy, 
+                this.r, b.r
+            );
+            if(times.length) {
+                if(times.length === 1) {
+                    if(this.checkBallBallTime(times[0], time)) { return times[0] }
+                    return;
+                }
+                if(times[0] <= times[1]) {
+                    if(this.checkBallBallTime(times[0], time)) { return times[0] }
+                    if(this.checkBallBallTime(times[1], time)) { return times[1] }
+                    return
+                }
+                if(this.checkBallBallTime(times[1], time)) { return times[1] }                
+                if(this.checkBallBallTime(times[0], time)) { return times[0] }
+            }
+        }
+    }
+    collideLine(l, time) {
+        const x1 = l.x2 - l.x1;
+        const y1 = l.y2 - l.y1;
+        const d = (x1 * x1 + y1 * y1) ** 0.5;
+        const nx = x1 / d;
+        const ny = y1 / d;            
+        const u = (this.vx  * nx + this.vy  * ny) * 2;
+        this.x += this.vx * time;   
+        this.y += this.vy * time;   
+        this.vx = (nx * u - this.vx) * WALL_LOSS;
+        this.vy = (ny * u - this.vy) * WALL_LOSS;
+        this.x -= this.vx * time;
+        this.y -= this.vy * time;
+    }
+    collide(b, time) {
+        const a = this;
+        const m1 = a.m;
+        const m2 = b.m;
+        const x = a.x - b.x
+        const y = a.y - b.y  
+        const d = (x * x + y * y);
+        const u1 = (a.vx * x + a.vy * y) / d
+        const u2 = (x * a.vy - y * a.vx ) / d
+        const u3 = (b.vx * x + b.vy * y) / d
+        const u4 = (x * b.vy - y * b.vx ) / d
+        const mm = m1 + m2;
+        const vu3 = (m1 - m2) / mm * u1 + (2 * m2) / mm * u3;
+        const vu1 = (m2 - m1) / mm * u3 + (2 * m1) / mm * u1;
+        a.x = a.x + a.vx * time;
+        a.y = a.y + a.vy * time;
+        b.x = b.x + b.vx * time;
+        b.y = b.y + b.vy * time;
+        b.vx = x * vu1 - y * u4;
+        b.vy = y * vu1 + x * u4;
+        a.vx = x * vu3 - y * u2;
+        a.vy = y * vu3 + x * u2;
+        a.x = a.x - a.vx * time;
+        a.y = a.y - a.vy * time;
+        b.x = b.x - b.vx * time;
+        b.y = b.y - b.vy * time;
+    }
+    doesOverlap(ball) {
+        const x = this.x - ball.x;
+        const y = this.y - ball.y;
+        return  (this.r + ball.r) > ((x * x + y * y) ** 0.5);  
+    }       
 }
